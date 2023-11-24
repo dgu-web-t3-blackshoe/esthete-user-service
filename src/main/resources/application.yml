@@ -20,6 +20,9 @@ spring:
 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP-SERVERS}
+
   security:
     oauth2:
       redirect-uri: ${SUCCESS_REDIRECT_URI}

@@ -50,6 +50,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.json:json:20210307'
+
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    //kafka-client
+    implementation 'org.apache.kafka:kafka-clients:3.1.0'
+
 }
 
 tasks.named('test') {

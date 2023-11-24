@@ -1,11 +1,16 @@
 package blackshoe.estheteuserservice.oauth2;
 
 
+import blackshoe.estheteuserservice.dto.UserDto;
 import blackshoe.estheteuserservice.entity.User;
+import blackshoe.estheteuserservice.repository.UserRepository;
+import blackshoe.estheteuserservice.service.KafkaUserInfoProducerService;
 import blackshoe.estheteuserservice.vo.Role;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +29,12 @@ import java.util.Map;
 @Slf4j
 @Service @Transactional
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private KafkaUserInfoProducerService kafkaUserInfoProducerService;
     public CustomOAuth2UserService() {
         super();
     }
@@ -66,7 +77,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .provider(authProvider)
                     .build();
 
+            userRepository.save(user);
 
+            UserDto.UserInfoDto userInfoDto = UserDto.UserInfoDto.builder()
+                    .userId(user.getUserId())
+                    .email(user.getEmail())
+                    .build();
+            kafkaUserInfoProducerService.createUser(userInfoDto);
         } catch (UsernameNotFoundException e) {
             log.error("User not found with email: {}", email);
             throw e;
