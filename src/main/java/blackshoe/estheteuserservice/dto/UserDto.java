@@ -20,5 +20,24 @@ public class UserDto {
         private String email;
         private String role;
     }
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+    public static class CreateTestUserRequest{
+        private String email;
+        private String provider;
+    }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+    public static class CreateTestUserResponse{
+        private UUID userId;
+        private String jwt;
+        private String createdAt;
+    }
 }

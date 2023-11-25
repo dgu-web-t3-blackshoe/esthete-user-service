@@ -40,7 +40,7 @@ spring:
             provider: instagram
             clientId: ${INSTAGRAM_CLIENT_ID}
             client-secret: ${INSTAGRAM_CLIENT_SECRET}
-            scope: email
+            scope: user_profile
             client-name: Instagram
             authorization-grant-type: authorization_code
             redirect-uri: ${OAUTH2_BASE_URI}/oauth2/callback/instagram
@@ -71,12 +71,14 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
 springfox:
   documentation:
     swagger-ui:
       enabled: true
       base-url: user
+    open-api:
+      v3:
+        path: user/v3/api-docs
 
 app:
   jwt:
