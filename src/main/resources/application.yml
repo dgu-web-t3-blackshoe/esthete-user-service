@@ -52,7 +52,7 @@ spring:
             user-name-attribute: username
   jpa:
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL8InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: true
     generate-ddl: true
     show-sql: false
