@@ -12,7 +12,7 @@ public class KafkaUserInfoProducerServiceImpl implements KafkaUserInfoProducerSe
     private final KafkaProducer kafkaProducer;
 
     @Override
-    public void createUser(UserDto.UserInfoDto userInfoDto) {
+    public void createUser(UserDto.UserInfoDto userInfoDto)  {
         String topic = "user-create";
 
         String userJsonString;

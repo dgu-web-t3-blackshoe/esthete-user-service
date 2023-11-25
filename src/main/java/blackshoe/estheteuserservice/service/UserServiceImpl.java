@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,12 +21,14 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Override
+    @Override @Transactional
     public UserDto.CreateTestUserResponse createTestUser(UserDto.CreateTestUserRequest createTestUserRequest) {
 
         User user = User.builder()
+                .userId(UUID.randomUUID())
                 .email(createTestUserRequest.getEmail())
                 .provider(createTestUserRequest.getProvider())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         userRepository.save(user);
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService{
                 .role(Role.USER.getRoleName())
                 .build();
 
-        kafkaUserInfoProducerService.createUser(userInfoDto);
+        //kafkaUserInfoProducerService.createUser(userInfoDto);
 
         return UserDto.CreateTestUserResponse.builder()
                 .userId(userInfoDto.getUserId())
