@@ -1,0 +1,86 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: esthete-user
+  #  h2:
+  #    console:
+  #      enabled: true
+  #      path: /h2-console
+  #    datasource:
+  #      url: jdbc:h2:mem:testdb
+  #      username: sa
+  #      password: sa
+  #      driver-class-name: org.h2.Driver
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_INITIAL_DB}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP-SERVERS}
+
+  security:
+    oauth2:
+      redirect-uri: ${SUCCESS_REDIRECT_URI}
+      client:
+        registration:
+          #        facebook:
+          #          client-id: ${FACEBOOK_CLIENT_ID}
+          #          client-secret: ${FACEBOOK_CLIENT_SECRET}
+          #          redirect-uri: ${OAUTH2_BASE_URI}/oauth2/callback/facebook
+          #          authorization-grant-type: authorization_code
+          #          scope: email
+          #          client-name: facebook
+
+          instagram:
+            provider: instagram
+            clientId: ${INSTAGRAM_CLIENT_ID}
+            client-secret: ${INSTAGRAM_CLIENT_SECRET}
+            scope: user_profile
+            client-name: Instagram
+            authorization-grant-type: authorization_code
+            redirect-uri: ${OAUTH2_BASE_URI}/oauth2/callback/instagram
+            client-authentication-method: client_secret_post
+
+        provider:
+          instagram:
+            authorization-uri: https://api.instagram.com/oauth/authorize
+            token-uri: https://api.instagram.com/oauth/access_token
+            user-info-uri: https://graph.instagram.com/me?fields=id,username&access_token={access-token}
+            user-name-attribute: username
+  jpa:
+    open-in-view: true
+    generate-ddl: true
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Seoul
+        show_sql: false
+        format_sql: true
+    repositories:
+      enabled: true
+  profiles:
+    active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+      base-url: user
+    open-api:
+      v3:
+        path: user/v3/api-docs
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 3684000
