@@ -57,7 +57,7 @@ spring:
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_DATASOURCE_DDL-AUTO}
     properties:
       hibernate:
         jdbc:
@@ -71,6 +71,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    
 springfox:
   documentation:
     swagger-ui:
