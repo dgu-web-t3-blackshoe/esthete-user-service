@@ -3,6 +3,8 @@ package blackshoe.estheteuserservice.oauth2;
 
 import blackshoe.estheteuserservice.dto.UserDto;
 import blackshoe.estheteuserservice.entity.User;
+import blackshoe.estheteuserservice.exception.UserErrorResult;
+import blackshoe.estheteuserservice.exception.UserException;
 import blackshoe.estheteuserservice.repository.UserRepository;
 import blackshoe.estheteuserservice.service.KafkaUserInfoProducerService;
 import blackshoe.estheteuserservice.vo.Role;
@@ -15,7 +17,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -51,10 +52,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         final String authProvider = userRequest.getClientRegistration().getClientName();
         String email = null;
 
-        if(authProvider.toLowerCase().equals("instagram")){
+        /*final OAuth2User oAuth2User = super.loadUser(userRequest);
+
+        try {
+            log.info("OAuth2User attributes {} ", new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
+        } catch (JsonProcessingException e) {
+            log.error("Error while parsing OAuth2User attributes: {}", e.getMessage());
+        }
+        final String authProvider = userRequest.getClientRegistration().getClientName();
+        String email = null;
+*/
+        if (authProvider.toLowerCase().equals("instagram")) {
             log.info("Auth provider: {}", authProvider);
 
-            // 여기에서 Instagram 인증 로직을 추가합니다.
+/*                // 여기에서 Instagram 인증 로직을 추가합니다.
             String userInfoUri = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
             log.info(userInfoUri);
             userInfoUri = userInfoUri.replace("{access-token}", userRequest.getAccessToken().getTokenValue());
@@ -64,7 +75,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             log.info(response.toString());
             Map<String, String> userAttributes = response.getBody();
 
-            email = userAttributes.get("email");
+            email = userAttributes.get("email");*/
+            log.info("Auth provider: {}", authProvider);
+            email = (String) oAuth2User.getAttributes().get("email");
         }
 
         User user = null;
@@ -83,15 +96,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .userId(user.getUserId())
                     .email(user.getEmail())
                     .build();
+
             kafkaUserInfoProducerService.createUser(userInfoDto);
-        } catch (UsernameNotFoundException e) {
+        } catch (UserException e) {
             log.error("User not found with email: {}", email);
             throw e;
         }
 
         if(user==null){
             log.info("User is null");
-            throw new UsernameNotFoundException("User 정보 초기화 안됨: " + email);
+            throw new OAuth2AuthenticationException(null, "User is null");
         }
 
         log.info("user email {}", user.getEmail());
