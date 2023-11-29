@@ -42,8 +42,11 @@ public class User {
     @Column(name = "created_at", nullable = false, length = 20)
     private LocalDateTime createdAt;
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    @PrePersist
+    public void setUserId() {
+        if(this.userId == null) {
+            this.userId = UUID.randomUUID();
+        }
     }
 
     public void setRole(Role role) {
