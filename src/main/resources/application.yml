@@ -58,8 +58,8 @@ spring:
     generate-ddl: true
     show-sql: true
     hibernate:
-      #ddl-auto: ${SPRING_DATASOURCE_DDL-AUTO}
-      ddl-auto: create
+      ddl-auto: ${SPRING_DATASOURCE_DDL-AUTO}
+      #ddl-auto: create
     properties:
       hibernate:
         jdbc:
